@@ -20,7 +20,7 @@ runner = [
   "probe-rs",
   "run",
   "--chip",
-  "nRF52840_xxAA",
+  "nRF52832_xxAA",
   "--log-format",
   "{L} {s}",
 ]
