@@ -30,7 +30,8 @@ fn panic(_: &core::panic::PanicInfo) -> ! {
 #[cortex_m_rt::entry]
 fn main() -> ! {
     rtt_init_print!();
-    ltr390_test()
+    // hal_nrf52840_button();
+    ltr390_test();
 }
 
 fn ltr390_test() -> ! {
