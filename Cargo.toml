@@ -15,6 +15,7 @@ atomic-pool = "1.0.1"
 static_cell = "2.0.0"
 embassy-sync = "0.6.0"
 
+
 [dependencies.panic-probe]
 version = "1"
 features = [ "print-defmt" ]
@@ -47,7 +48,7 @@ features = [ "defmt", "gpiote", "time-driver-rtc1", "nrf52840" ]
 
 [dependencies.nrf-softdevice]
 version = "0.1.0"
-path = "/home/pat/Projects/Examples/nrf-softdevice/nrf-softdevice"
+git = "https://github.com/embassy-rs/nrf-softdevice.git"
 features = [
 "defmt",
 "ble-peripheral",
@@ -60,6 +61,7 @@ features = [
 "ble-gatt-client",
 "ble-sec"
 ]
+
 
 [dependencies.nrf-softdevice-s140]
 version = "0.1.1"

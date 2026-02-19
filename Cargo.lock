@@ -91,9 +91,9 @@ checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
 
 [[package]]
 name = "bumpalo"
-version = "3.19.1"
+version = "3.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5dd9dc738b7a8311c7ade152424974d8115f2cdad61e8dab8dac9f2362298510"
+checksum = "5c6f81257d10a0f602a294ae4182251151ff97dbb504ef9afcdda4a64b24d9b4"
 
 [[package]]
 name = "bytemuck"
@@ -722,6 +722,7 @@ dependencies = [
 [[package]]
 name = "nrf-softdevice"
 version = "0.1.0"
+source = "git+https://github.com/embassy-rs/nrf-softdevice.git#5949a5b1445cc907745c6449a35577e4544cd255"
 dependencies = [
  "cortex-m",
  "critical-section",
@@ -734,13 +735,14 @@ dependencies = [
  "futures",
  "heapless",
  "nrf-softdevice-macro",
- "nrf-softdevice-s140 0.1.2",
+ "nrf-softdevice-s140 0.1.2 (git+https://github.com/embassy-rs/nrf-softdevice.git)",
  "num_enum",
 ]
 
 [[package]]
 name = "nrf-softdevice-macro"
 version = "0.1.0"
+source = "git+https://github.com/embassy-rs/nrf-softdevice.git#5949a5b1445cc907745c6449a35577e4544cd255"
 dependencies = [
  "Inflector",
  "darling 0.13.4",
@@ -753,12 +755,13 @@ dependencies = [
 [[package]]
 name = "nrf-softdevice-s140"
 version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5ea93a1e11efdafcf914ed6b81b5be0cd99ee8ff6c3060102265ea863a355393"
 
 [[package]]
 name = "nrf-softdevice-s140"
 version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ea93a1e11efdafcf914ed6b81b5be0cd99ee8ff6c3060102265ea863a355393"
+source = "git+https://github.com/embassy-rs/nrf-softdevice.git#5949a5b1445cc907745c6449a35577e4544cd255"
 
 [[package]]
 name = "num-traits"

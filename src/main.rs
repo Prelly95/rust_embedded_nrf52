@@ -1,16 +1,9 @@
 #![no_std]
 #![no_main]
-
-
-
-
-
 #![macro_use]
 use defmt_rtt as _; // global logger
 use embassy_nrf as _; // time driver
 use panic_probe as _;
-
-
 use core::mem;
 
 use defmt::{info, *};
