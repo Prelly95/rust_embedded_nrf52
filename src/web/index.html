@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fairy Lights</title>
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    background: #0b0b12;
+    color: #f5e6c8;
+    font-family: system-ui, sans-serif;
+    padding: 2rem 0;
+    box-sizing: border-box;
+  }
+  h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  button#power {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    border: 2px solid #f5c453;
+    background: #1a1a24;
+    color: #f5c453;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+  button#power.on {
+    background: #f5c453;
+    color: #1a1a24;
+    box-shadow: 0 0 2.5rem #f5c45388;
+  }
+  .slider-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    width: 80vw;
+    max-width: 20rem;
+    transition: opacity 0.2s;
+  }
+  .slider-row.disabled {
+    opacity: 0.35;
+  }
+  input[type=range] {
+    width: 100%;
+    accent-color: #f5c453;
+  }
+  input[type=range]:disabled {
+    cursor: not-allowed;
+  }
+  .patterns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+    width: 80vw;
+    max-width: 20rem;
+  }
+  .patterns button {
+    padding: 0.8rem 0.5rem;
+    border-radius: 0.6rem;
+    border: 2px solid #3a3a48;
+    background: #1a1a24;
+    color: #f5e6c8;
+    font-size: 0.95rem;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .patterns button.selected {
+    border-color: #f5c453;
+    background: #2a2418;
+    color: #f5c453;
+  }
+</style>
+</head>
+<body>
+  <h1>Fairy Lights</h1>
+  <button id="power">&hellip;</button>
+  <div class="slider-row">
+    <label for="brightness">Brightness: <span id="brightness-value">--</span>%</label>
+    <input type="range" id="brightness" min="0" max="100" value="50">
+  </div>
+  <div class="patterns" id="patterns">
+    <button data-pattern="alternate">Alternate breathe</button>
+    <button data-pattern="sync">Sync breathe</button>
+    <button data-pattern="twinkle">Twinkle</button>
+    <button data-pattern="solid">Solid</button>
+  </div>
+  <div class="slider-row">
+    <label for="breathe-speed">Breathe speed: <span id="breathe-speed-value">--</span>s</label>
+    <input type="range" id="breathe-speed" min="500" max="10000" step="100" value="2000">
+  </div>
+  <div class="slider-row">
+    <label for="twinkle-speed">Twinkle speed: <span id="twinkle-speed-value">--</span>ms</label>
+    <input type="range" id="twinkle-speed" min="10" max="400" step="10" value="200">
+  </div>
+
+<script>
+  const powerBtn = document.getElementById('power');
+  const slider = document.getElementById('brightness');
+  const brightnessValue = document.getElementById('brightness-value');
+  const patternButtons = document.querySelectorAll('#patterns button');
+  const breatheSpeedSlider = document.getElementById('breathe-speed');
+  const breatheSpeedValue = document.getElementById('breathe-speed-value');
+  const twinkleSpeedSlider = document.getElementById('twinkle-speed');
+  const twinkleSpeedValue = document.getElementById('twinkle-speed-value');
+  let on = true;
+
+  function setPowerUi(isOn) {
+    on = isOn;
+    powerBtn.textContent = isOn ? 'ON' : 'OFF';
+    powerBtn.classList.toggle('on', isOn);
+  }
+
+  function setSliderEnabled(sliderEl, enabled) {
+    sliderEl.disabled = !enabled;
+    sliderEl.closest('.slider-row').classList.toggle('disabled', !enabled);
+  }
+
+  function setPatternUi(pattern) {
+    patternButtons.forEach((btn) => {
+      btn.classList.toggle('selected', btn.dataset.pattern === pattern);
+    });
+    setSliderEnabled(breatheSpeedSlider, pattern === 'alternate' || pattern === 'sync');
+    setSliderEnabled(twinkleSpeedSlider, pattern === 'twinkle');
+  }
+
+  async function refresh() {
+    const res = await fetch('/api/state');
+    const state = await res.json();
+    setPowerUi(state.on);
+    slider.value = state.brightness;
+    brightnessValue.textContent = state.brightness;
+    setPatternUi(state.pattern);
+    breatheSpeedSlider.value = state.breatheMs;
+    breatheSpeedValue.textContent = (state.breatheMs / 1000).toFixed(1);
+    twinkleSpeedSlider.value = state.twinkleMs;
+    twinkleSpeedValue.textContent = state.twinkleMs;
+  }
+
+  powerBtn.addEventListener('click', async () => {
+    await fetch(on ? '/api/off' : '/api/on');
+    setPowerUi(!on);
+  });
+
+  slider.addEventListener('input', () => {
+    brightnessValue.textContent = slider.value;
+  });
+
+  slider.addEventListener('change', async () => {
+    await fetch(`/api/brightness?value=${slider.value}`);
+  });
+
+  patternButtons.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const pattern = btn.dataset.pattern;
+      setPatternUi(pattern);
+      await fetch(`/api/pattern?value=${pattern}`);
+    });
+  });
+
+  breatheSpeedSlider.addEventListener('input', () => {
+    breatheSpeedValue.textContent = (breatheSpeedSlider.value / 1000).toFixed(1);
+  });
+
+  breatheSpeedSlider.addEventListener('change', async () => {
+    await fetch(`/api/breathe-speed?value=${breatheSpeedSlider.value}`);
+  });
+
+  twinkleSpeedSlider.addEventListener('input', () => {
+    twinkleSpeedValue.textContent = twinkleSpeedSlider.value;
+  });
+
+  twinkleSpeedSlider.addEventListener('change', async () => {
+    await fetch(`/api/twinkle-speed?value=${twinkleSpeedSlider.value}`);
+  });
+
+  refresh();
+</script>
+</body>
+</html>
